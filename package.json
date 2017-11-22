@@ -1,0 +1,22 @@
+{
+  "name": "labelingtool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./bin/server.js"
+  },
+  "author": "quoc.pp",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "express-react-views": "^0.10.4",
+    "nodemon": "^1.12.1",
+    "optimist": "^0.6.1",
+    "path": "^0.12.7",
+    "react": "^16.1.1",
+    "react-dom": "^16.1.1"
+  }
+}
