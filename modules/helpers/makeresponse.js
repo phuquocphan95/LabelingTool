@@ -1,4 +1,4 @@
-exports.error = function(res, code, message) {
+exports.error = function(res, code, message = "") {
   return res.status(code).send(message)
 }
 

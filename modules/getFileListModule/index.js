@@ -1,16 +1,21 @@
-var Promise = require('bluebird')
-var readFile = Promise.promisify(require('fs').readFile)
-var configs = require('./../../config.js')
-var responsemaker = require('./../helpers/makeresponse.js')
+var Promise = require("bluebird")
+var fs = require("fs-extra")
+var configs = require("./../../config.js")
+var responsemaker = require("./../helpers/makeresponse.js")
 
 module.exports = function(req, res) {
-  return readFile(configs.fileinfopath)
+  return new Promise(function (resolve, reject) {
+    fs.readFile(configs.fileinfopath, function (err, data) {
+      if (err) reject(err)
+      else resolve(data)
+    })
+  })
   .then(
     function(data) {
       return responsemaker.success(res, JSON.parse(data))
-    },
+    })
+  .catch(
     function (e) {
-      return responsemaker.error(res, 500, "Internal Error")
-    }
-  )
+      return responsemaker.error(res, 500, { message : "internal error" })
+    })
 }
