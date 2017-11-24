@@ -9,7 +9,7 @@ var python = require("python-shell")
 
 module.exports = function (req, res) {
   var form = new formidable.IncomingForm({
-        uploadDir: configs.tmpdir,
+        uploadDir: configs.uploaddir,
         keepExtensions: false
       })
 
