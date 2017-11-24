@@ -41,3 +41,4 @@ node_modules-off
 .DS_Store
 /files/*
 /tmp/*
+/downloads/*

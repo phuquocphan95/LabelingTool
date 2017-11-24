@@ -101,9 +101,7 @@ input:
 output:
   success:
   status code: 200
-  {
-    url : <url to file>
-  }
+  file attach
   fail:
   status code: 404 (when file don't exist)
   {

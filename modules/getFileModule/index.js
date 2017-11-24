@@ -31,13 +31,29 @@ module.exports = function (req, res) {
           var options = {
                 mode: "json",
                 scriptPath: configs.scriptdir,
-                args: [path.join(configs.filesdir, fileid, pageid) + ".csv"]
+                args: [
+                  path.join(configs.filesdir, fileid),
+                  array[0].pagenumber,
+                  path.join(configs.downloadir, fileid)
+                ]
               }
-          python.run('concatcsv.py', options, function (err, result) {
+          python.run("concatcsv.py", options, function (err, result) {
             if (err) reject(err)
-            else {
-              resolve(result)
-            }
+            else resolve(result)
+          })
+        })
+        .then(function (result) {
+          // send file to browser
+          return new Promise(function (resolve, reject) {
+            res.status(200).download(
+              path.join(configs.downloadir, fileid),
+              array[0].name,
+              function (err) {
+
+                if (err) reject(err)
+                else resolve(path.join(configs.downloadir, fileid))
+              }
+            )
           })
         })
         break
@@ -45,8 +61,21 @@ module.exports = function (req, res) {
         Promise.reject()
     }
   })
+  .then(
+    function (filepath) {
+      // Delete temp file
+      return new Promise(function (resolve, reject) {
+        fs.remove(filepath, function (err) {
+          if (err) reject(err)
+          else resolve()
+        })
+      })
+    },
+    function (err) {
+      return responsemaker.error(res, 500, { message : "internal error" })
+    }
+  )
   .catch(function (err) {
-    return responsemaker.error(res, 500, { message : "internal error" })
+    console.log(err)
   })
-
 }

@@ -83,20 +83,19 @@ module.exports = function (req, res) {
     })
   })
   .then(
-    function (path) { return path },
+    function (filepath) {
+      // Delete temp file
+      return new Promise(function (resolve, reject) {
+        fs.remove(filepath, function (err) {
+          if (err) reject(err)
+          else resolve()
+        })
+      })
+    },
     function (err) {
       return responsemaker.error(res, 500, { message : "internal error" })
     }
   )
-  .then(function (filepath) {
-    // Delete temp file
-    return new Promise(function (resolve, reject) {
-      fs.remove(filepath, function (err) {
-        if (err) reject(err)
-        else resolve()
-      })
-    })
-  })
   .catch(function (err) {
     console.log(err)
   })

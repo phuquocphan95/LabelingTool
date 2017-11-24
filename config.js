@@ -1,5 +1,6 @@
-var path = require('path')
+var path = require("path")
 
-exports.filesdir  = path.join(__dirname, 'files')
-exports.scriptdir = path.join(__dirname, 'pythonscript')
-exports.tmpdir = path.join(__dirname, 'tmp')
+exports.filesdir  = path.join(__dirname, "files")
+exports.scriptdir = path.join(__dirname, "pythonscript")
+exports.tmpdir = path.join(__dirname, "tmp")
+exports.downloadir = path.join(__dirname, "downloads")
