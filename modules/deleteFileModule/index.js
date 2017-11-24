@@ -9,7 +9,7 @@ module.exports = function(req, res) {
   var fileid = urlelements[urlelements.length - 1]
 
   return new Promise(function (resolve, reject) {
-    fs.readFile(configs.fileinfopath, function (err, data) {
+    fs.readFile(path.join(configs.filesdir, "info.json"), function (err, data) {
       if (err) reject(err)
       else resolve(data)
     })
@@ -26,7 +26,7 @@ module.exports = function(req, res) {
         return responsemaker.error(res, 404, { message : "file not found" })
         break;
       case 1:
-      
+
         info = {
           "filenumber" : info.filenumber - 1,
           "files" : info.files.filter(function (element) {
@@ -36,14 +36,14 @@ module.exports = function(req, res) {
 
         return new Promise(function (resolve, reject) {
           // update info file
-          fs.writeFile(configs.fileinfopath, JSON.stringify(info), function (err) {
+          fs.writeFile(path.join(configs.filesdir, "info.json"), JSON.stringify(info),
+          function (err) {
             if (err) reject(err)
             else resolve(array[0].id)
           })
         })
         .then(function (fileid) {
           // delete folder
-          console.log(configs.filesdir)
           return new Promise(function (resolve, reject) {
             fs.remove(path.join(configs.filesdir, fileid), function (err) {
               if (err) reject(err)

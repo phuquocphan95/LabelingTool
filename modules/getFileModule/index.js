@@ -5,10 +5,9 @@ var responsemaker = require("./../helpers/makeresponse.js")
 var path = require("path")
 var python = require("python-shell")
 
-module.exports = function(req, res) {
+module.exports = function (req, res) {
   var urlelements = req.url.split("/")
-  var pageid = urlelements[urlelements.length - 1]
-  var fileid = urlelements[urlelements.length - 2]
+  var fileid = urlelements[urlelements.length - 1]
 
   return new Promise(function (resolve, reject) {
     fs.readFile(path.join(configs.filesdir, "info.json"), function (err, data) {
@@ -34,22 +33,20 @@ module.exports = function(req, res) {
                 scriptPath: configs.scriptdir,
                 args: [path.join(configs.filesdir, fileid, pageid) + ".csv"]
               }
-          python.run('readcsv.py', options, function (err, result) {
+          python.run('concatcsv.py', options, function (err, result) {
             if (err) reject(err)
             else {
               resolve(result)
             }
           })
         })
-        .then(function (result) {
-          return responsemaker.success(res, { message: result} )
-        })
         break
       default:
         Promise.reject()
     }
   })
-  .catch(function (e) {
-      return responsemaker.error(res, 500, { message : "internal error" })
+  .catch(function (err) {
+    return responsemaker.error(res, 500, { message : "internal error" })
   })
+
 }

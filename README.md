@@ -80,3 +80,36 @@ status code: 500
 {
   message: "internal error"
 }
+
+4. Upload file
+input:
+  POST /files
+  file in form format: key = "file"
+output:
+success:
+  status code: 200
+  file list json like 1
+fail:
+  status code: 500
+  {
+    message: "internal error"
+  }
+
+4. Download file
+input:
+  GET /files/:fileid
+output:
+  success:
+  status code: 200
+  {
+    url : <url to file>
+  }
+  fail:
+  status code: 404 (when file don't exist)
+  {
+    message: "file not found"
+  }
+  status code: 500
+  {
+    message: "internal error"
+  }

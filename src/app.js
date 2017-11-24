@@ -1,3 +1,4 @@
+var Promise = require("bluebird")
 var express = require("express")
 var routes  = require("../routes")
 var argv    = require("optimist").argv
@@ -6,6 +7,20 @@ var cors    = require("cors")
 var path    = require("path")
 var bodyParser = require("body-parser")
 var methodOverride = require("method-override")
+var configs = require("../config")
+var fs = require("fs-extra")
+var fileinfodir = path.join(configs.filesdir, "info.json")
+
+if (!fs.existsSync(fileinfodir)) {
+  var info = {
+    filenumber : 0,
+    files: []
+  }
+  fs.writeFile(fileinfodir, JSON.stringify(info), function (err) {
+      if (err) console.log("Can't create " + fileinfodir)
+    }
+  )
+}
 
 app.set("port", {
   port: argv.p || 7770
