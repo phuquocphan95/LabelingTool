@@ -10,7 +10,7 @@ var getfilehandler = require("./../modules/getFileModule")
 var putfilepagehandler = require("./../modules/putFilePageModule")
 
 router.get("/", function (req, res) {
-  res.send("OK")
+  res.render("index")
 })
 
 router.get("/files", authenticate, getfilelisthandler)
