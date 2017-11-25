@@ -11,9 +11,11 @@ class Index extends React.Component {
           <meta charSet="utf-8"/>
           <title>File Manager</title>
           <link rel="stylesheet" href="public/libs/bootstrap/css/bootstrap.min.css"/>
+          <link rel="stylesheet" href="public/libs/pnotify/pnotify.custom.min.css"/>
           <link rel="stylesheet" href="public/css/index.css"/>
           <script type="text/javascript" src="public/libs/jquery/js/jquery.min.js"></script>
           <script type="text/javascript" src="public/libs/bootstrap/js/bootstrap.min.js"></script>
+          <script type="text/javascript" src="public/libs/pnotify/pnotify.custom.min.js"></script>
         </head>
         <body>
           <div id="root"></div>

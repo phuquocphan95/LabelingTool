@@ -31,7 +31,7 @@ class FileManager extends React.Component {
   constructor(props) {
     super(props)
     this.state = {files : []}
-
+    this.handleAddFile = this.handleAddFile.bind(this)
   }
   componentWillMount() {
     self = this
@@ -52,13 +52,98 @@ class FileManager extends React.Component {
         type: "DELETE",
         url: "files/" + fileid,
         dataType: "JSON",
-        success: (data) => self.setState(data)
+        success: function (data) {
+          new PNotify({
+            title: "Success",
+            text: "Successfully delete file",
+            type: "success",
+            stack : false,
+            delay: 1000
+          })
+          self.setState(data)
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          switch (xhr.status) {
+            case 500:
+              new PNotify({
+                title: "Error",
+                text: "Internal server error",
+                type: "error",
+                stack : false,
+                delay: 1000
+              })
+              break;
+            case 404:
+              new PNotify({
+                title: "Error",
+                text: "File not found",
+                type: "error",
+                stack : false,
+                delay: 1000
+              })
+              break;
+            default:
+              new PNotify({
+                title: "Error",
+                text: "Error code " + xhr.status,
+                type: "error",
+                stack : false,
+                delay: 1000
+              })
+          }
+        }
       })
     }
   }
 
   handleOpen(fileid) {
     alert("open" + fileid)
+  }
+
+  handleAddFile() {
+    var self = this
+    var data = new FormData();
+    data.append( "file", $( "#hiddenFileChooser" )[0].files[0] );
+    $.ajax({
+          url: "/files",
+          type: "POST",
+          data: data,
+          contentType: false,
+          processData: false,
+
+          success: function (data, textStatus, xhr) {
+            new PNotify({
+              title: "Success",
+              text: "Successfully adding new file",
+              type: "success",
+              stack : false,
+              delay: 1000
+            })
+            $("#hiddenFileChooser").val("")
+            self.setState(data)
+          },
+          error: function (xhr, ajaxOptions, thrownError) {
+            switch (xhr.status) {
+              case 500:
+                new PNotify({
+                  title: "Error",
+                  text: "Internal server error please check your file format",
+                  type: "error",
+                  stack : false,
+                  delay: 1000
+                })
+                break;
+              default:
+                new PNotify({
+                  title: "Error",
+                  text: "Error code " + xhr.status,
+                  type: "error",
+                  stack : false,
+                  delay: 1000
+                })
+            }
+          }
+    })
   }
 
   render() {
@@ -77,14 +162,16 @@ class FileManager extends React.Component {
     )
 
     return (
-
       <div className="col-sm-10 col-sm-offset-1">
         <div className="row">
           <div className="col-sm-4">
-            <button type="button" id="btnaddfile" className="btn btn-success">
+            <button type="button" id="btnAddFile" className="btn btn-success"
+            onClick={(function () {$("#hiddenFileChooser").click()}).bind(this)}>
               <span className="glyphicon glyphicon-plus"></span> Add file
             </button>
           </div>
+          <input type="file" id="hiddenFileChooser" accept=".csv"
+          onChange={this.handleAddFile}/>
         </div>
         <div className="row">
           <div className="col-sm-12">
