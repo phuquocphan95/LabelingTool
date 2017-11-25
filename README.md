@@ -33,9 +33,7 @@ input:
 output:
   success:
   status code: 200
-  {
-    message: "Success"
-  }
+  file list json like 1
   fail:
   status code: 404
   {

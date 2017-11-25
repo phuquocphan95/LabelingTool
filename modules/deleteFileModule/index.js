@@ -51,7 +51,7 @@ module.exports = function(req, res) {
             })
           })
           .then(function () {
-            return responsemaker.success(res, { message : "success" })
+            return responsemaker.success(res, info)
           })
         })
         break;

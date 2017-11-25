@@ -44,7 +44,17 @@ class FileManager extends React.Component {
   }
 
   handleDelete(fileid) {
-    alert("del" + fileid)
+    var r = confirm("Are you sure?")
+
+    if (r == true)
+    {
+      $.ajax({
+        type: "DELETE",
+        url: "files/" + fileid,
+        dataType: "JSON",
+        success: (data) => self.setState(data)
+      })
+    }
   }
 
   handleOpen(fileid) {
