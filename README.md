@@ -111,3 +111,26 @@ output:
   {
     message: "internal error"
   }
+
+5. Update file pageid
+input:
+  PUT /files/:fileid/:pageid
+  1 <= pageid <= pagenumber
+  {
+    labels: <Labels seperated by ",">
+  }
+output:
+  success:
+  status code: 200
+  {
+    message : "success"
+  }
+  fail:
+  status code: 404 (when file isn't exist or pageid not found)
+  {
+    message: "file not found"
+  }
+  status code: 500
+  {
+    message: "internal error"
+  }
