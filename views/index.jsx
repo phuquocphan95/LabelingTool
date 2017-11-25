@@ -9,7 +9,7 @@ class Index extends React.Component {
       <html>
         <head>
           <meta charSet="utf-8"/>
-          <title>File Manager</title>
+          <title>Labels</title>
           <link rel="stylesheet" href="public/libs/bootstrap/css/bootstrap.min.css"/>
           <link rel="stylesheet" href="public/libs/pnotify/pnotify.custom.min.css"/>
           <link rel="stylesheet" href="public/css/index.css"/>
@@ -22,6 +22,7 @@ class Index extends React.Component {
           <script src="public/libs/react/js/babel.min.js"></script>
           <script src="public/libs/react/js/react.min.js"></script>
           <script src="public/libs/react/js/react-dom.js"></script>
+          <script type="text/jsx" src="public/js/labels.js"></script>
           <script type="text/jsx" src="public/js/index.js"></script>
         </body>
       </html>

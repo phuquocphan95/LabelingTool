@@ -16,8 +16,8 @@ class TableRow extends React.Component {
             </button>
           </div>
           <div className="col-sm-4">
-            <button type="button" className="btn btn-primary"
-              onClick={this.props.handleopen.bind(this, this.props.id)}>
+            <button type="button" className="btn btn-success"
+              onClick={this.props.handleopen.bind(this, this.props.id, this.props.postnumber)}>
               <span className="glyphicon glyphicon-folder-open"></span>
             </button>
           </div>
@@ -32,9 +32,11 @@ class FileManager extends React.Component {
     super(props)
     this.state = {files : []}
     this.handleAddFile = this.handleAddFile.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
+    this.handleOpen = this.handleOpen.bind(this)
   }
   componentWillMount() {
-    self = this
+    var self = this
     $.ajax({
       type: "GET",
       url: "files",
@@ -44,6 +46,7 @@ class FileManager extends React.Component {
   }
 
   handleDelete(fileid) {
+    var self = this
     var r = confirm("Are you sure?")
 
     if (r == true)
@@ -96,8 +99,9 @@ class FileManager extends React.Component {
     }
   }
 
-  handleOpen(fileid) {
-    alert("open" + fileid)
+  handleOpen(fileid, pagenumber) {
+    ReactDOM.render(<LabelManager fileid={fileid} pagenumber={pagenumber}/>,
+      document.getElementById("root"))
   }
 
   handleAddFile() {
@@ -164,8 +168,8 @@ class FileManager extends React.Component {
     return (
       <div className="col-sm-10 col-sm-offset-1">
         <div className="row">
-          <div className="col-sm-4">
-            <button type="button" id="btnAddFile" className="btn btn-success"
+          <div className="col-sm-3">
+            <button type="button" id="btnAddFile" className="btn btn-primary"
             onClick={(function () {$("#hiddenFileChooser").click()}).bind(this)}>
               <span className="glyphicon glyphicon-plus"></span> Add file
             </button>

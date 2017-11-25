@@ -9,15 +9,15 @@ var postfilehandler = require("./../modules/postFileModule")
 var getfilehandler = require("./../modules/getFileModule")
 var putfilepagehandler = require("./../modules/putFilePageModule")
 
-router.get("/", function (req, res) {
-  res.render("index")
-})
-
 router.get("/files", authenticate, getfilelisthandler)
 router.delete("/files/:fileid", authenticate, deletefilehandler)
 router.get("/files/:fileid/:pageid", authenticate, getfilepagehandler)
 router.post("/files", authenticate, postfilehandler)
 router.get("/files/:fileid", authenticate, getfilehandler)
 router.put("/files/:fileid/:pageid", authenticate, putfilepagehandler)
+
+router.get("/", function (req, res) {
+  res.render("index")
+})
 
 module.exports = router
