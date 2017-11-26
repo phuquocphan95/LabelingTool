@@ -1,134 +1,35 @@
-1. Get file list:
-input:
-  GET /files
-output:
-  success:
-  status code: 200
-  {
-    filenumber: <file number>,
-    files: [
-    {
-      id: <file id>,
-      name: <file name>,
-      pagenumber : <pagenumber>
-    },
-    {
-      id: <file id>,
-      name: <file name>,
-      pagenumber : <pagenumber>
-    }
-      ...
-    ]
-  }
+# Requirements
+- NodeJS 6.10.1 or higher
+- Python 2.7.13 (with PyVi and pandas)
 
-  fail:
-  status code: 500
-  {
-    message: "internal error"
-  }
 
-2. Delete a file
-input:
-  DELETE /files/:fileid
-output:
-  success:
-  status code: 200
-  file list json like 1
-  fail:
-  status code: 404
-  {
-    message: "file not found"
-  }
+# New Features!
+- Add file to system
+- Remove file from system
+- Open file to label
 
-  status code: 500
-  {
-    message: "internal error"
-  }
+### Tech
 
-3. Read file Page
-input:
-  GET /files/:fileid/:pageid
-   1 <= pageid <= pagenumber
-output:
-success:
-status code: 200
-{
-  message: [
-  {
-   token : <token>,
-   label : <label>
-  },
-  {
-   token : <token>,
-   label : <label>
-  },
-  ...
-  {
-   token : <token>,
-   label : <label>
-  }
-  ]
-}
-fail:
-status code: 404 (when file isn't exist or pageid not found)
-{
-  message: "file not found"
-}
-status code: 500
-{
-  message: "internal error"
-}
+Dillinger uses a number of open source projects to work properly:
 
-4. Upload file
-input:
-  POST /files
-  file in form format: key = "file"
-output:
-success:
-  status code: 200
-  file list json like 1
-fail:
-  status code: 500
-  {
-    message: "internal error"
-  }
+* React
+* Twitter Bootstrap
+* node.js
+* Express
+* jQuery
 
-4. Download file
-input:
-  GET /files/:fileid
-output:
-  success:
-  status code: 200
-  file attach
-  fail:
-  status code: 404 (when file don't exist)
-  {
-    message: "file not found"
-  }
-  status code: 500
-  {
-    message: "internal error"
-  }
+### Installation and run
+Install
+```sh
+$ git clone  ...
+$ npm install
+```
 
-5. Update file pageid
-input:
-  PUT /files/:fileid/:pageid
-  1 <= pageid <= pagenumber
-  {
-    labels: <Labels seperated by ",">
-  }
-output:
-  success:
-  status code: 200
-  {
-    message : "success"
-  }
-  fail:
-  status code: 404 (when file isn't exist or pageid not found)
-  {
-    message: "file not found"
-  }
-  status code: 500
-  {
-    message: "internal error"
-  }
+Run
+
+```sh
+$ npm start [port]
+```
+
+Access http://localhost:[port]
+(Default port is 7770)
