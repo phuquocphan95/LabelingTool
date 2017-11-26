@@ -17,7 +17,13 @@ class TableRow extends React.Component {
           </div>
           <div className="col-sm-4">
             <button type="button" className="btn btn-success"
-              onClick={this.props.handleopen.bind(this, this.props.id, this.props.postnumber)}>
+              onClick={
+                this.props.handleopen.bind(
+                  this,
+                  this.props.id,
+                  this.props.postnumber,
+                  this.props.filename
+                )}>
               <span className="glyphicon glyphicon-folder-open"></span>
             </button>
           </div>
@@ -27,14 +33,51 @@ class TableRow extends React.Component {
   }
 }
 
+class FileTable extends React.Component {
+  constructor (props) {
+    super(props)
+  }
+
+  render () {
+    var self = this
+    var rowlist = this.props.files.map(
+      function (file) {
+        return (
+          <TableRow
+            filename={file.name}
+            id={file.id}
+            postnumber={file.pagenumber}
+            handledelete={self.props.handledelete}
+            handleopen={self.props.handleopen}/>
+        )
+      }
+    )
+    return (
+      <table className="table table-striped">
+        <thead>
+          <tr>
+            <th>File name</th>
+            <th>Post number</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rowlist}
+        </tbody>
+      </table>
+    )
+  }
+}
+
 class FileManager extends React.Component {
   constructor(props) {
     super(props)
     this.state = {files : []}
     this.handleAddFile = this.handleAddFile.bind(this)
-    this.handleDelete = this.handleDelete.bind(this)
     this.handleOpen = this.handleOpen.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
   }
+
   componentWillMount() {
     var self = this
     $.ajax({
@@ -46,9 +89,8 @@ class FileManager extends React.Component {
   }
 
   handleDelete(fileid) {
-    var self = this
     var r = confirm("Are you sure?")
-
+    var self = this
     if (r == true)
     {
       $.ajax({
@@ -99,8 +141,11 @@ class FileManager extends React.Component {
     }
   }
 
-  handleOpen(fileid, pagenumber) {
-    ReactDOM.render(<LabelManager fileid={fileid} pagenumber={pagenumber}/>,
+  handleOpen(fileid, pagenumber, filename) {
+    ReactDOM.render(<LabelManager
+      fileid={fileid}
+      pagenumber={pagenumber}
+      filename={filename}/>,
       document.getElementById("root"))
   }
 
@@ -114,7 +159,6 @@ class FileManager extends React.Component {
           data: data,
           contentType: false,
           processData: false,
-
           success: function (data, textStatus, xhr) {
             new PNotify({
               title: "Success",
@@ -151,20 +195,6 @@ class FileManager extends React.Component {
   }
 
   render() {
-    var self = this
-    var rowlist = this.state.files.map(
-      function (file) {
-        return (
-          <TableRow
-            filename={file.name}
-            id={file.id}
-            postnumber={file.pagenumber}
-            handledelete={self.handleDelete}
-            handleopen={self.handleOpen}/>
-        )
-      }
-    )
-
     return (
       <div className="col-sm-10 col-sm-offset-1">
         <div className="row">
@@ -179,18 +209,10 @@ class FileManager extends React.Component {
         </div>
         <div className="row">
           <div className="col-sm-12">
-            <table className="table table-striped">
-              <thead>
-                <tr>
-                  <th>File name</th>
-                  <th>Post number</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rowlist}
-              </tbody>
-            </table>
+            <FileTable
+                      handleopen={this.handleOpen}
+                      handledelete={this.handleDelete}
+                      files={this.state.files}/>
           </div>
         </div>
       </div>
