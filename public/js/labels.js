@@ -2,6 +2,11 @@ class LabelRows extends React.Component {
   constructor (props) {
     super(props)
   }
+  onChecked (label) {
+    this.props.label = label
+    this.props.onupdate(this.props.index, label)
+    this.setState({})
+  }
   render () {
     return (
       <tr>
@@ -10,32 +15,32 @@ class LabelRows extends React.Component {
           <form>
             <label className="radio-inline">
               <input type="radio" name="optradio"
-              defaultChecked={this.props.label == "B-NAME"}
-              onClick={this.props.onupdate.bind(this, this.props.index, "B-NAME")}
+              checked={this.props.label == "B-NAME"}
+              onChange={this.onChecked.bind(this, "B-NAME")}
               />B-NAME
             </label>
             <label className="radio-inline">
               <input type="radio" name="optradio"
-              defaultChecked={this.props.label == "I-NAME"}
-              onClick={this.props.onupdate.bind(this, this.props.index, "I-NAME")}
+              checked={this.props.label == "I-NAME"}
+              onChange={this.onChecked.bind(this, "I-NAME")}
               />I-NAME
             </label>
             <label className="radio-inline">
               <input type="radio" name="optradio"
-              defaultChecked={this.props.label == "B-AGE"}
-              onClick={this.props.onupdate.bind(this, this.props.index, "B-AGE")}
+              checked={this.props.label == "B-AGE"}
+              onChange={this.onChecked.bind(this, "B-AGE")}
               />B-AGE
             </label>
             <label className="radio-inline">
               <input type="radio" name="optradio"
-              defaultChecked={this.props.label == "I-AGE"}
-              onClick={this.props.onupdate.bind(this, this.props.index, "I-AGE")}
+              checked={this.props.label == "I-AGE"}
+              onChange={this.onChecked.bind(this, "I-AGE")}
               />I-AGE
             </label>
             <label className="radio-inline">
               <input type="radio" name="optradio"
-              defaultChecked={this.props.label == "O"}
-              onClick={this.props.onupdate.bind(this, this.props.index, "O")}
+              checked={this.props.label == "O"}
+              onChange={this.onChecked.bind(this, "O")}
               />O
             </label>
           </form>
@@ -82,8 +87,78 @@ class Pagination extends React.Component {
   }
 
   render () {
+    var pages = []
+    var firstpage = this.props.pageid - this.props.halfpagebarsize
+    var lastpage  = this.props.pageid + this.props.halfpagebarsize
+    var redundancefirst = 1 - firstpage
+    var redundancelast = lastpage - this.props.pagenumber
+
+    if (redundancefirst > 0)
+    {
+      lastpage = lastpage + redundancefirst
+      lastpage = (lastpage < this.props.pagenumber + 1) ? lastpage : this.props.pagenumber
+      firstpage = 1
+    }
+    else
+    {
+      if (redundancelast > 0)
+      {
+        firstpage = firstpage - redundancelast
+        firstpage = (firstpage > 0) ? firstpage : 1
+        lastpage = this.props.pagenumber
+      }
+    }
+
+
+    if (firstpage > 1)
+    {
+      pages.push(
+        <li onClick={this.props.onpagechange.bind(this, 1)}><a href="#">first</a></li>
+      )
+    }
+    else
+    {
+      pages.push(
+        <li className="disabled"><a href="#">first</a></li>
+      )
+    }
+
+    for (var i =firstpage; i < lastpage + 1; i++)
+    {
+
+      if (i == this.props.pageid)
+      {
+        pages.push(
+          <li className="active"><a href="#">{i}</a></li>
+        )
+      }
+      else
+      {
+        pages.push(
+          <li
+          onClick = {this.props.onpagechange.bind(this, i)}
+          ><a href="#">{i}</a></li>
+        )
+      }
+    }
+
+    if (lastpage < this.props.pagenumber)
+    {
+      pages.push(
+        <li onClick={this.props.onpagechange.bind(this, this.props.pagenumber)}><a href="#">last</a></li>
+      )
+    }
+    else
+    {
+      pages.push(
+        <li className="disabled"><a href="#">last</a></li>
+      )
+    }
+
     return (
-      <div>1,2,3</div>
+        <ul className="pagination">
+            {pages}
+        </ul>
     )
   }
 }
@@ -95,9 +170,9 @@ class LabelManager extends React.Component {
     this.onUpdate = this.onUpdate.bind(this)
     this.onDownload = this.onDownload.bind(this)
     this.labels = []
-    this.props.pageid = 1
     this.state = {
       message : [],
+      pageid: 1
     }
   }
 
@@ -111,13 +186,57 @@ class LabelManager extends React.Component {
         self.labels = data.message.map((message) => message.label)
         self.setState({
           message : data.message,
+          pageid : 1
         })
       }
     })
   }
 
   onPageChange (pageid) {
-
+    var self = this
+    $.ajax({
+      type: "GET",
+      url: "files/" + self.props.fileid + "/" + pageid,
+      dataType: "JSON",
+      success: function (data) {
+        self.labels = data.message.map((message) => message.label)
+        self.setState({
+          message : data.message,
+          pageid: pageid
+        })
+      }
+      ,
+      error: function (xhr, ajaxOptions, thrownError) {
+        switch (xhr.status) {
+          case 500:
+            new PNotify({
+              title: "Error",
+              text: "Internal server error",
+              type: "error",
+              stack : false,
+              delay: 1000
+            })
+            break;
+          case 404:
+            new PNotify({
+              title: "Error",
+              text: "File or page not found",
+              type: "error",
+              stack : false,
+              delay: 1000
+            })
+            break;
+          default:
+            new PNotify({
+              title: "Error",
+              text: "Error code " + xhr.status,
+              type: "error",
+              stack : false,
+              delay: 1000
+            })
+        }
+      }
+    })
   }
 
   onUpdate (index, label) {
@@ -126,7 +245,7 @@ class LabelManager extends React.Component {
     var labelstring = this.labels.join()
     $.ajax({
       type: "PUT",
-      url: "files/" + self.props.fileid + "/" + self.props.pageid,
+      url: "files/" + self.props.fileid + "/" + self.state.pageid,
       dataType: "JSON",
       data: {
         labels: labelstring
@@ -189,7 +308,13 @@ class LabelManager extends React.Component {
           </div>
         </div>
         <div className="row">
-          <Pagination/>
+          <div className="col-sm-6 col-sm-offset-6">
+            <Pagination
+            onpagechange={this.onPageChange}
+            pagenumber={this.props.pagenumber}
+            pageid={this.state.pageid}
+            halfpagebarsize={3}/>
+          </div>
         </div>
         <div className="row">
           <div className="col-sm-12">
