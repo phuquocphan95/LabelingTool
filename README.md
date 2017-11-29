@@ -1,6 +1,6 @@
 # Requirements
 - NodeJS 6.10.1 or higher
-- Python 2.7.13 (with PyVi and pandas)
+- Python 2.7.13 (with nnvlp and pandas)
 
 
 # New Features!

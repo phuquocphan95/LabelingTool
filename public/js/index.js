@@ -4,26 +4,52 @@ class TableRow extends React.Component {
   }
 
   render() {
+    var statuscom = null
+    var deldisable = false
+    var opendisable = false
+    switch (this.props.status) {
+      case 0:
+        statuscom = <i>Error</i>
+        opendisable = true
+        break;
+      case 1:
+        statuscom = <i>Processing</i>
+        deldisable = true
+        opendisable = true
+        break;
+      case 2:
+        statuscom = <i>Ready</i>
+        break;
+      default:
+        deldisable = true
+        opendisable = true
+        statuscom = <i>Undefined</i>
+        break;
+    }
     return (
       <tr>
         <td>{this.props.filename}</td>
         <td>{this.props.postnumber}</td>
+        <td>{statuscom}</td>
         <td>
           <div className="col-sm-4">
             <button type="button" className="btn btn-danger"
-              onClick={this.props.handledelete.bind(this, this.props.id)}>
+              onClick={this.props.handledelete.bind(this, this.props.id)}
+              disabled={deldisable}>
               <span className="glyphicon glyphicon-trash"></span>
             </button>
           </div>
           <div className="col-sm-4">
             <button type="button" className="btn btn-success"
-              onClick={
+                onClick={
                 this.props.handleopen.bind(
                   this,
                   this.props.id,
                   this.props.postnumber,
                   this.props.filename
-                )}>
+                )}
+                disabled={opendisable}
+                >
               <span className="glyphicon glyphicon-folder-open"></span>
             </button>
           </div>
@@ -47,7 +73,7 @@ class FileTable extends React.Component {
             filename={file.name}
             id={file.id}
             postnumber={file.pagenumber}
-            state={file.status}
+            status={file.status}
             handledelete={self.props.handledelete}
             handleopen={self.props.handleopen}/>
         )
@@ -59,6 +85,7 @@ class FileTable extends React.Component {
           <tr>
             <th>File name</th>
             <th>Post number</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -160,12 +187,6 @@ class FileManager extends React.Component {
           data: data,
           contentType: false,
           processData: false,
-          beforeSend: function () {
-            $('#processing').css("visibility", "visible");
-          },
-          complete: function(){
-            $('#processing').css("visibility", "hidden");
-          },
           success: function (data, textStatus, xhr) {
             new PNotify({
               title: "Success",
@@ -212,13 +233,14 @@ class FileManager extends React.Component {
             </button>
           </div>
           <div className="col-sm-3">
-            <input type="file" id="hiddenFileChooser" accept=".csv" onChange={this.handleAddFile}/>
+            <button type="button" id="btnRefresh" className="btn btn-success"
+            onClick={(function () {location.reload()}).bind(this)}>
+              <span className="glyphicon glyphicon-refresh"></span> Refresh
+            </button>
           </div>
         </div>
         <div className="row">
-          <div className="col-sm-12">
-            <div id="processing">Processing...</div>
-          </div>
+          <input type="file" id="hiddenFileChooser" accept=".csv" onChange={this.handleAddFile}/>
         </div>
         <div className="row">
           <div className="col-sm-12">

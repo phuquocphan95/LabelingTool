@@ -13,8 +13,8 @@ if __name__ == "__main__":
     for post in __posts:
         __counter = __counter + 1
         __result = __model.predict(post)
-        __tokens = __result["token_text"][0]
-        __pos = __result["pos"][0]
+        __tokens = sum(__result["token_text"], [])
+        __pos = sum(__result["pos"], [])
         __labels = [u"O" for i in __tokens]
         __data = {"label" : __labels, "token" : __tokens, "pos": __pos}
         pd.DataFrame(data=__data)\

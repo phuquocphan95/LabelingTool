@@ -18,7 +18,7 @@ module.exports = function(req, res) {
     var info = JSON.parse(data)
     var array = info.files.filter(
       function (element) {
-        return element.id === fileid
+        return (element.id === fileid) && (element.status != 1)
       })
 
     switch (array.length) {

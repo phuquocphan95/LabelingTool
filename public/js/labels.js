@@ -311,12 +311,12 @@ class LabelManager extends React.Component {
           </div>
         </div>
         <div className="row">
-          <div className="col-sm-6 col-sm-offset-6">
+          <div className="col-sm-12">
             <Pagination
             onpagechange={this.onPageChange}
             pagenumber={this.props.pagenumber}
             pageid={this.state.pageid}
-            halfpagebarsize={3}/>
+            halfpagebarsize={2}/>
           </div>
         </div>
         <div className="row">

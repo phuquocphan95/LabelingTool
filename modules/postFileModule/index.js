@@ -21,34 +21,19 @@ module.exports = function (req, res) {
     })
   })
   .then(createFolder)
-  .then(readInformation)
-  .then(function (arguments) {
-    var uploadinfo = arguments.uploadinfo
-    var info = arguments.info
+  .then(function (uploadinfo) {
     var newfileinfo = {
       id : uploadinfo.fileid,
       name : uploadinfo.fileoriginalname,
       pagenumber: 0,
       status: 1 // 0: error, 1: processing, 2: ready
     }
-    var newinfo = {
-      filenumber : info.filenumber + 1,
-      files : info.files.concat([newfileinfo])
-    }
-    return updateInformation(
-      {
-        uploadinfo : uploadinfo,
-        info : newinfo
-      }
-    )
-    .then(function () {
-      responsemaker.success(res, newinfo)
-      return (
-        {
-          uploadinfo : uploadinfo,
-          info : newinfo
-        }
-      )
+    return updateInformation(newfileinfo)
+    .then(function (newdata) {
+      return responsemaker.success(res, newdata)
+    })
+    .then(function (newdata) {
+      return uploadinfo
     })
   })
   .then(
@@ -58,7 +43,6 @@ module.exports = function (req, res) {
     }
   )
   .then (function (arguments) {
-    var info = arguments.info
     var uploadinfo = arguments.uploadinfo
     var filepath = uploadinfo.filepath
     var uploadeddir = uploadinfo.uploadeddir
@@ -70,20 +54,7 @@ module.exports = function (req, res) {
       pagenumber: arguments.result.postnumber,
       status: 2 // 0: error, 1: processing, 2: ready
     }
-    var newinfo = {
-      filenumber : info.filenumber,
-      files : info.files.map(function (file) {
-        if (file.id == fileid) return newfileinfo
-        else return file
-      })
-    }
-    console.log(newinfo.files)
-    return updateInformation(
-      {
-        info : newinfo,
-        uploadinfo : uploadinfo
-      }
-    )
+    return updateInformation(newfileinfo)
   })
   .catch(function (err) {console.log(err)})
 }
@@ -110,40 +81,50 @@ function createFolder(file) {
   })
 }
 
-function readInformation(uploadinfo) {
-  /*read information*/
+function updateInformation(newfileinfo) {
+  /*update info*/
   return new Promise(function (resolve, reject) {
     fs.readFile(path.join(configs.filesdir, "info.json"), function (err, data) {
       if (err) reject(err)
-      else resolve({
-        info : JSON.parse(data),
-        uploadinfo : uploadinfo
-      })
+      else resolve(JSON.parse(data))
+    })
+  })
+  .then(function (data) {
+    var filterresult = data.files.filter((file) => file.id == newfileinfo.id)
+    var newdata = {}
+
+    if (filterresult.length == 0)
+    {
+      // add new file
+      newdata = {
+        filenumber : data.filenumber + 1,
+        files : data.files.concat(newfileinfo)
+      }
+    }
+    else
+    {
+      // update information
+      newdata = {
+        filenumber : data.filenumber,
+        files : data.files.map(function (file) {
+          if (file.id == newfileinfo.id) return newfileinfo
+          else return file
+        })
+      }
+    }
+    return new Promise(function (resolve, reject) {
+      fs.writeFile(path.join(configs.filesdir, "info.json"), JSON.stringify(newdata),
+        function (err) {
+          if (err) reject(err)
+          else resolve(newdata)
+        }
+      )
     })
   })
 }
 
-function updateInformation(arguments) {
-  /*update info*/
-  var info = arguments.info
-  var uploadinfo = arguments.uploadinfo
-
-  return new Promise(function (resolve, reject) {
-    fs.writeFile(path.join(configs.filesdir, "info.json"), JSON.stringify(info),
-      function (err) {
-        if (err) reject(err)
-        else resolve({
-          info : info,
-          uploadinfo : uploadinfo
-        })
-      })
-  })
-}
-
-function executePython(arguments) {
+function executePython(uploadinfo) {
   /*execute python*/
-  var info = arguments.info
-  var uploadinfo = arguments.uploadinfo
   var filepath = uploadinfo.filepath
   var uploadeddir = uploadinfo.uploadeddir
   var fileid = uploadinfo.fileid
@@ -158,7 +139,6 @@ function executePython(arguments) {
     python.run('resolvecsv.py', options, function (err, result) {
       if (err) reject(err)
       else resolve({
-        info : info,
         uploadinfo : uploadinfo,
         result : result[0]
       })
@@ -166,27 +146,14 @@ function executePython(arguments) {
   })
   .catch (function (err) {
     /*update file status to error*/
-    console.log(err)
     var newfileinfo = {
       id : fileid,
       name : fileoriginalname,
       pagenumber: 0,
-      status: 1 // 0: error, 1: processing, 2: ready
+      status: 0 // 0: error, 1: processing, 2: ready
     }
-    var newinfo = {
-      filenumber : info.filenumber,
-      files : info.files.map(function (file) {
-        if (file.id == fileid) return newfileinfo
-        else return file
-      })
-    }
-    return updateInformation(
-      {
-        info : info,
-        uploadinfo : uploadinfo,
-        newinfo : newinfo
-      }
-    )
+
+    return updateInformation(newfileinfo)
     .then(function () {return Promise.reject()})
   })
 }
