@@ -11,6 +11,7 @@ class LabelRows extends React.Component {
     return (
       <tr>
         <td>{this.props.token}</td>
+        <td>{this.props.pos}</td>
         <td>
           <form>
             <label className="radio-inline">
@@ -62,6 +63,7 @@ class TokenTable extends React.Component {
       <LabelRows
         token={message.token}
         label={message.label}
+        pos={message.pos}
         index={index}
         onupdate={self.props.onupdate}/>
     )
@@ -70,6 +72,7 @@ class TokenTable extends React.Component {
         <thead>
           <tr>
             <th>Token</th>
+            <th>POS</th>
             <th>Label</th>
           </tr>
         </thead>

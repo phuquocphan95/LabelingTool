@@ -47,6 +47,7 @@ class FileTable extends React.Component {
             filename={file.name}
             id={file.id}
             postnumber={file.pagenumber}
+            state={file.status}
             handledelete={self.props.handledelete}
             handleopen={self.props.handleopen}/>
         )
@@ -159,6 +160,12 @@ class FileManager extends React.Component {
           data: data,
           contentType: false,
           processData: false,
+          beforeSend: function () {
+            $('#processing').css("visibility", "visible");
+          },
+          complete: function(){
+            $('#processing').css("visibility", "hidden");
+          },
           success: function (data, textStatus, xhr) {
             new PNotify({
               title: "Success",
@@ -204,8 +211,14 @@ class FileManager extends React.Component {
               <span className="glyphicon glyphicon-plus"></span> Add file
             </button>
           </div>
-          <input type="file" id="hiddenFileChooser" accept=".csv"
-          onChange={this.handleAddFile}/>
+          <div className="col-sm-3">
+            <input type="file" id="hiddenFileChooser" accept=".csv" onChange={this.handleAddFile}/>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-12">
+            <div id="processing">Processing...</div>
+          </div>
         </div>
         <div className="row">
           <div className="col-sm-12">

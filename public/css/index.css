@@ -9,3 +9,7 @@
 #hiddenFileChooser {
   display: None
 }
+
+#processing {
+  visibility: hidden;
+}
