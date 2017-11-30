@@ -20,7 +20,8 @@ if __name__ == "__main__":
 
         if token == "]":
             __counter = __counter + 1
-            pd.DataFrame(data={"token": __cur_post, "pos": __cur_tags}) \
+            labels = ["O" for i in __cur_post]
+            pd.DataFrame(data={"token": __cur_post, "pos": __cur_tags, "label": labels}) \
                 .to_csv(path.join(__outdir, str(__counter) + ".csv"), encoding="utf-8", index=False)
             __cur_post = []
             __cur_tags = []
