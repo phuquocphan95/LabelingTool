@@ -159,6 +159,12 @@ class FileManager extends React.Component {
           data: data,
           contentType: false,
           processData: false,
+          beforeSend: function () {
+            $("#processingText").css("visibility", "visible")
+          },
+          complete: function () {
+            $("#processingText").css("visibility", "hidden")
+          },
           success: function (data, textStatus, xhr) {
             new PNotify({
               title: "Success",
@@ -204,8 +210,14 @@ class FileManager extends React.Component {
               <span className="glyphicon glyphicon-plus"></span> Add file
             </button>
           </div>
-          <input type="file" id="hiddenFileChooser" accept=".csv"
-          onChange={this.handleAddFile}/>
+          <div className="col-sm-3">
+            <input type="file" id="hiddenFileChooser" accept=".csv" onChange={this.handleAddFile}/>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-sm-3">
+            <div id="processingText">Processing...</div>
+          </div>
         </div>
         <div className="row">
           <div className="col-sm-12">
